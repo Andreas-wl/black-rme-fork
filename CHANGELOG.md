@@ -1,3 +1,9 @@
+#### 3.6 (Unreleased)
+
+Features:
+
+* Add custom folder support for items.toml files. Users can now specify a custom directory for items data in the Client Version preferences, similar to the existing DAT & SPR folder selection.
+
 #### 3.5
 
 Features:
