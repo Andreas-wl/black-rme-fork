@@ -515,9 +515,15 @@ wxNotebookPage* PreferencesWindow::CreateClientPage()
 	topsizer->AddSpacer(10);
 
 	wxScrolledWindow *client_list_window = newd wxScrolledWindow(client_page, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	client_list_window->SetMinSize(FROM_DIP(this, wxSize(450, 450)));
-    auto * client_list_sizer = newd wxFlexGridSizer(2, 10, 10);
+	client_list_window->SetMinSize(FROM_DIP(this, wxSize(650, 450)));
+    auto * client_list_sizer = newd wxFlexGridSizer(3, 10, 10);
 	client_list_sizer->AddGrowableCol(1);
+	client_list_sizer->AddGrowableCol(2);
+
+	// Add headers
+	client_list_sizer->Add(newd wxStaticText(client_list_window, wxID_ANY, "Client Version"), wxSizerFlags(0).Expand());
+	client_list_sizer->Add(newd wxStaticText(client_list_window, wxID_ANY, "Assets Folder (DAT & SPR)"), wxSizerFlags(0).Expand());
+	client_list_sizer->Add(newd wxStaticText(client_list_window, wxID_ANY, "Items Folder (items.toml)"), wxSizerFlags(0).Expand());
 
     int version_counter = 0;
 	for(auto version : versions) {
@@ -537,6 +543,15 @@ wxNotebookPage* PreferencesWindow::CreateClientPage()
 		tooltip << "The editor will look for " << wxstr(version->getName()) << " DAT & SPR here.";
 		tmp_text->SetToolTip(tooltip);
 		dir_picker->SetToolTip(tooltip);
+
+		// Add items directory picker
+		wxDirPickerCtrl* items_dir_picker = newd wxDirPickerCtrl(client_list_window, wxID_ANY, version->getItemsPath().GetFullPath());
+		items_dir_pickers.push_back(items_dir_picker);
+		client_list_sizer->Add(items_dir_picker, wxSizerFlags(0).Border(wxRIGHT, 10).Expand());
+
+		wxString items_tooltip;
+		items_tooltip << "The editor will look for " << wxstr(version->getName()) << " items.toml here. Leave empty to use default data directory.";
+		items_dir_picker->SetToolTip(items_tooltip);
 
 		if(version->getID() == g_settings.getInteger(Config::DEFAULT_CLIENT_VERSION))
 			default_version_choice->SetSelection(version_counter);
@@ -697,6 +712,12 @@ void PreferencesWindow::Apply()
 		if(dir.Length() > 0 && dir.Last() != '/' && dir.Last() != '\\')
 			dir.Append("/");
 		version->setClientPath(FileName(dir));
+
+		// Set items directory
+		wxString items_dir = items_dir_pickers[version_counter]->GetPath();
+		if(items_dir.Length() > 0 && items_dir.Last() != '/' && items_dir.Last() != '\\')
+			items_dir.Append("/");
+		version->setItemsPath(FileName(items_dir));
 
 		if(version->getName() == default_version_choice->GetStringSelection())
 			g_settings.setInteger(Config::DEFAULT_CLIENT_VERSION, version->getID());

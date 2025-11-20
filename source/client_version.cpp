@@ -138,6 +138,25 @@ void ClientVersion::loadVersions()
 	{
 		// pass
 	}
+
+	// Load the items directory info
+	try
+	{
+		json read_obj = json::parse(g_settings.getString(Config::ITEMS_DATA_DIRS));
+		auto items_obj = read_obj.get<std::vector<json>>();
+		for (const auto& item_iter : items_obj) {
+			const auto& item_obj = item_iter.get<json::object_t>();
+			auto version = get(item_obj.at("id").get<std::string>());
+			if (version == nullptr) {
+				continue;
+			}
+			version->setItemsPath(wxstr(item_obj.at("path").get<std::string>()));
+		}
+	}
+	catch ([[maybe_unused]]const json::exception& e)
+	{
+		// pass
+	}
 }
 
 void ClientVersion::unloadVersions()
@@ -361,6 +380,26 @@ void ClientVersion::saveVersions()
 	catch ([[maybe_unused]]const json::exception& e) {
 		// pass
 	}
+
+	try {
+		json items_obj;
+
+		for(auto& [id, version] : client_versions) {
+			if (!version->getItemsPath().GetFullPath().IsEmpty()) {
+				json item_obj;
+				item_obj["id"] = version->getName();
+				item_obj["path"] = version->getItemsPath().GetFullPath().ToStdString();
+				items_obj.push_back(item_obj);
+			}
+		}
+
+		std::ostringstream out;
+		out << items_obj;
+		g_settings.setString(Config::ITEMS_DATA_DIRS, out.str());
+	}
+	catch ([[maybe_unused]]const json::exception& e) {
+		// pass
+	}
 }
 
 // Client version class
@@ -558,6 +597,11 @@ bool ClientVersion::isVisible() const
 void ClientVersion::setClientPath(const FileName& dir)
 {
 	client_path.Assign(dir);
+}
+
+void ClientVersion::setItemsPath(const FileName& dir)
+{
+	items_path.Assign(dir);
 }
 
 MapVersionID ClientVersion::getPrefferedMapVersionID() const
