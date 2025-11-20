@@ -223,6 +223,7 @@ void Settings::IO(IOMode mode)
 	String(DATA_DIRECTORY, "");
 	String(EXTENSIONS_DIRECTORY, "");
 	String(ASSETS_DATA_DIRS, "");
+	String(ITEMS_DATA_DIRS, "");
 
 	section("Editor");
 	String(RECENT_FILES, "");

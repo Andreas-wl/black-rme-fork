@@ -220,6 +220,7 @@ public:
 	bool hasValidPaths();
 	bool loadValidPaths();
 	void setClientPath(const FileName& dir);
+	void setItemsPath(const FileName& dir);
 
 	bool isVisible() const;
 	std::string getName() const;
@@ -233,6 +234,7 @@ public:
 	FileName getDataPath() const;
 	FileName getLocalDataPath() const;
 	FileName getClientPath() const { return client_path; }
+	FileName getItemsPath() const { return items_path; }
 	wxFileName getMetadataPath() const { return metadata_path; }
 	wxFileName getSpritesPath() const { return sprites_path; }
 
@@ -250,6 +252,7 @@ private:
 
 	wxString data_path;
 	FileName client_path;
+	FileName items_path;
 	wxFileName metadata_path;
 	wxFileName sprites_path;
 

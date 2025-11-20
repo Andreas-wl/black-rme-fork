@@ -426,6 +426,13 @@ bool GUI::LoadDataFiles(wxString& error, wxArrayString& warnings)
 
 	g_gui.SetLoadDone(30, "Loading items data...");
 	wxString dataDir = data_path.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+	
+	// Check if there's a custom items directory set for this version
+	ClientVersion* loadedVer = g_gui.getLoadedVersion();
+	if(loadedVer && !loadedVer->getItemsPath().GetFullPath().IsEmpty()) {
+		dataDir = loadedVer->getItemsPath().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+	}
+	
 	if(!g_items.loadItems(dataDir, error, warnings)) {
 		warnings.push_back("Couldn't load items: " + error);
 	}

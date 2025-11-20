@@ -109,6 +109,7 @@ protected:
 	// Client info
 	wxChoice* default_version_choice;
 	std::vector<wxDirPickerCtrl*> version_dir_pickers;
+	std::vector<wxDirPickerCtrl*> items_dir_pickers;
 	wxCheckBox* check_sigs_chkbox;
 
 	// Create controls
