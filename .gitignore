@@ -51,3 +51,7 @@ xcuserdata
 # CLion
 .idea/
 cmake-build-debug/
+
+# CodeQL build artifacts
+source/_codeql_build_dir/
+_codeql_detected_source_root
